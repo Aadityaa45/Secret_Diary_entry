@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My secret Diary</title>
+    <link rel="stylesheet" href="diary.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="navbar">
+        <img src="newlogo.png">
+        <div class="navoptions">
+            <h1 class="navop" id="Write_diary_option">Write Diary</h1>
+            <h1 class="navop">Past Writes</h1>
+            <h1 class="navop">About</h1>
+        </div>
+    </div>
+    <div class="banner">
+        <div class="samasimg">
+            <img src="banner (2).png">
+        </div>
+    </div>
+    <div class="sliderr">
+        <div class="owl-carousel owl-theme">
+            <div class="item">
+                <img id="img12" src="img12.png">
+            </div>
+            <div class="item">
+                <img id="img13" src="img13.png">
+            </div>
+            <div class="item">
+                <img id="img14" src="img14.png">
+            </div>
+        </div>
+    </div>
+        
+    <div class="write_diary">
+        <h1>What's on your mind today? Write it down!</h1>
+        <span id="exit">X</span>
+        <input type="date" id="diary_time" required>
+        <input type="text" id="diary_title" placeholder="Enter Tittle" required>
+        <hr>
+        <h3> Let Your Mann Ki Baat Flow onto This Blank Canvas!</h3>
+        <textarea id="input_text" placeholder="write your diary entry here" rows="20"></textarea>
+        <input type="password" id="pass" placeholder="Set the password" required>
+        <hr>
+        <h3>You can Add Medias</h3>
+        <input type="file" id="entryImage" accept="image/*">
+        <hr>
+        
+        <input type="button" id="finishBtn" value="Finish">
+    </div>
+
+    <h1 id="all_head">Your Dairy Writings</h1>
+    <div class="all_writes " id="all_entries"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        $('.owl-carousel').owlCarousel({
+        loop:true,
+        margin:20,
+        nav:false,
+        autoplay:true,
+        responsive:{
+            0:{
+                items:1
+            },
+            600:{
+                items:3
+            },
+            1000:{
+                items:3
+            }
+        }
+    })
+    </script>
+<script>
+    $(document).ready(function (){
+    $(".write_diary").hide();
+    
+    $(".navop").hover(
+        function() {
+            $(this).css({
+                "transform": "scale(1.1)",
+                "transition": "transform 0.3s ease",
+                "background-image": "linear-gradient(109.6deg, rgb(228, 107, 232) 11.2%, rgb(87, 27, 226) 96.7%)",
+                "border-radius": "7px",
+                "padding": "10px"
+            });
+        }, 
+        function() {
+            $(this).css({
+                "transform": "scale(1)",
+                "text-shadow": "2px 2px 5px rgba(0, 0, 0, 0.3)",
+                "background": "none",
+            });
+        }
+    );
+
+    $("#Write_diary_option").click(function (){
+        $(".write_diary").show();
+    });
+
+    $("#close_diary").click(function() {
+        $(".write_diary").hide();
+    });
+
+    $("#exit").click(function (){
+        $(".write_diary").hide();
+    })
+
+    $("#finishBtn").click(function (){
+        let Input_date = $("#diary_time").val();
+        let Input_title = $("#diary_title").val();
+        let content = $("#input_text").val();
+        let img = $("#entryImage")[0].files[0];
+        let input_pass = $("#pass").val();
+
+        if(Input_date && Input_title && content){
+            let imageHTML = '';
+            let unique_id = Date.now()
+
+            if(img){
+                let img_reader = new FileReader();
+                img_reader.onload = function(e){
+                    imageHTML = `<img src="${e.target.result}" style="max-width: 100%; height: auto;">`;
+
+                    let written_diary_entry = `
+                    <div class="written_diary data-password="${input_pass}" data-id="${unique_id}"">
+                        <h2>Date:${Input_date}  Tittle:${Input_title}</h2>
+                        <div class="content_area">
+                            <p>${content}</p>
+                            ${imageHTML}
+                        </div>
+                        <input type="button" value="view" class="viewbtn">
+                    </div>`;
+                    
+                    $("#all_entries").append(written_diary_entry);
+                }
+                img_reader.readAsDataURL(img);
+            } else {
+                let written_diary_entry = `
+                <div class="written_diary" data-password="${input_pass}" data-id="${unique_id}">
+                    <h2>Date:${Input_date}  Tittle:${Input_title}</h2>
+                    <hr>
+                    <div class="content_area">
+                        <p>${content}</p>
+                    </div>
+                    <input type="button" value="view" class="viewbtn">
+                </div>`;
+                
+                $("#all_entries").append(written_diary_entry);
+            }
+        } else {
+            alert("The given field cannot be empty");
+        }
+    });
+
+    $("#all_entries").on('dblclick', '.viewbtn', function() {
+    // $(this).siblings(".content_area").css("filter", "none").fadeIn(3000);
+        let entryDiv = $(this).closest('.written_diary');
+        let storedPassword = entryDiv.data('password');
+        let entryId = entryDiv.data('id');
+        let flag = false;
+        let soundd1 = new Audio('succ.mp3');
+        let soundd2 = new Audio('success.mp3');
+        let soundd3 = new Audio('ending.mp3');
+
+        
+
+        for(let i=1;i<=3;i++){
+            let User_input_pass = prompt("Enter the Password:");
+            if(User_input_pass===storedPassword){
+                soundd1.play();
+                alert("Success!");
+                $(this).siblings(".content_area").css({
+                    "filter":"none",
+                    "overflow":"auto",
+                    "height":"auto",
+                }).fadeIn(5000);
+    
+                flag=true;
+                break;
+            }
+            else{
+                soundd2.play();
+                alert(`Not Matched: only ${3-i} chances left, after that the diary entry will disappear`)
+            }
+        }
+
+        if(flag==false){
+            soundd3.play();
+            $(this).siblings(".content_area").hide(5000,function (){
+                alert("Too many Unsuccesfull Tries! Containt disappeared")
+            });
+        }
+});
+$("#all_entries").mouseup(function (){
+    $(this).css({
+        "filter":"none",
+        "overflow":"auto",
+        "height":"auto",
+    }).fadeIn(5000);
+})    
+});
+
+</script>
+</body>
+</html>
